@@ -1,4 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
+import {withLocalStorage} from "@/lib/utils/localStorage";
+import {Token} from "@/lib/types/auth";
 
 const createApiInstance = (baseUrl: string): AxiosInstance => {
     const instance = axios.create({
@@ -10,10 +12,12 @@ const createApiInstance = (baseUrl: string): AxiosInstance => {
 
     instance.interceptors.request.use(
         async (config) => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
+            // const tokenStorage = withLocalStorage<string>("token");
+            // const token = tokenStorage.get();
+            // console.log(token);
+            // if (token) {
+            //     config.headers.Authorization = `Bearer ${token}`;
+            // }
             return config;
         },
         (error) => Promise.reject(error),

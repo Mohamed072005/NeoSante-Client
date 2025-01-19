@@ -8,3 +8,11 @@ export interface RegisterForm {
     email: string;
     password: string;
 }
+
+export interface Token {
+    data: string;
+}
+
+export interface ResetCountdownOTP {
+    data: string;
+}

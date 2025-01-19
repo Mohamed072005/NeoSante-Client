@@ -5,7 +5,7 @@ export const authService = {
     login: (data: LoginForm) =>
         authApi.post("/login", data),
     register: (data: RegisterForm) =>
-        authApi.post("/auth/register", data),
+        authApi.post("/register", data),
     logout: () =>
         authApi.post("/auth/logout"),
 }

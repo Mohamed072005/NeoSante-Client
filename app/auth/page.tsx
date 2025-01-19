@@ -1,7 +1,7 @@
 'use client'
 
-import {useState} from "react";
 import {AnimatePresence, motion} from "framer-motion";
+import {useState} from "react";
 import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card";
 import {HeartPulse} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -13,14 +13,14 @@ const AuthPage = () => {
     const [activeTab, setActiveTab] = useState<string>('login');
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-lg"
             >
-                <Card className="backdrop-blur-sm bg-white/95 shadow-xl border-0">
+                <Card className="backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/60 shadow-xl border-0">
                     <CardHeader className="space-y-1 flex flex-col items-center pb-8">
                         <motion.div
                             initial={{scale: 0.8}}
@@ -32,9 +32,9 @@ const AuthPage = () => {
                             }}
                             className="flex items-center gap-2 text-primary mb-2"
                         >
-                            <HeartPulse className="h-8 w-8 text-red-400"/>
-                            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-red-600 to-pink-700 bg-clip-text text-transparent">
-                                NeoSante
+                            <HeartPulse className="h-8 w-8 text-green-500"/>
+                            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-green-600 to-emerald-800 bg-clip-text text-transparent">
+                                NéoSanté
                             </h2>
                         </motion.div>
                         <CardDescription className="text-center text-base">
@@ -62,7 +62,7 @@ const AuthPage = () => {
                                         <LoginForm />
                                     </TabsContent>
                                     <TabsContent value="register" className="mt-0">
-                                        <RegisterForm />
+                                        <RegisterForm moveToLoginTab={() => setActiveTab('login')} />
                                     </TabsContent>
                                     <TabsContent value="forgot" className="mt-0">
                                         <ForgotPassword />
