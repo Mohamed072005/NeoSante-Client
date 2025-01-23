@@ -9,6 +9,10 @@ export interface RegisterForm {
     password: string;
 }
 
+export  interface VerifyOTPForm {
+    otp: string;
+}
+
 export interface Token {
     data: string;
 }

@@ -3,7 +3,10 @@
 import React, {useState, useEffect} from 'react';
 import {Timer, Mail} from 'lucide-react';
 import {withLocalStorage} from "@/lib/utils/localStorage";
-import {ResetCountdownOTP} from "@/lib/types/auth";
+import {ResetCountdownOTP, VerifyOTPForm} from "@/lib/types/auth";
+import {authService} from "@/lib/api/auth";
+import {FormEvent} from "preact-compat";
+import {useToast} from "@/hooks/use-toast";
 
 const OTPForm = () => {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -11,6 +14,7 @@ const OTPForm = () => {
     const [isDisabledButton, setIsDisabledButton] = useState(false);
     const [countDown, setCountDown] = useState(0);
     const [error, setError] = useState('');
+    const { toast } = useToast();
     const resetCountDownLocalStorage = withLocalStorage<ResetCountdownOTP>("resetCountdownOTP")
 
     const handleResendOTP = () => {
@@ -58,7 +62,7 @@ const OTPForm = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         const otpValue = otp.join('');
 
@@ -66,13 +70,27 @@ const OTPForm = () => {
             setError('Please enter the complete 6-digit code.');
             return;
         }
-
+        const payload: VerifyOTPForm = {
+            otp: otpValue
+        }
         setIsLoading(true);
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            alert('Verification Successful: Your email has been verified successfully.');
-        } catch (error) {
-            alert('Verification Failed: Please check the code and try again.');
+            const response = await authService.verifyOTP(payload);
+            console.log(response)
+        } catch (error: any) {
+            if(error?.response?.data?.message) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error!',
+                    description: error.response.data.message,
+                });
+            } else {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error!',
+                    description: error.message || "Network Error",
+                });
+            }
         } finally {
             setIsLoading(false);
         }

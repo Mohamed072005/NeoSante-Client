@@ -12,12 +12,12 @@ const createApiInstance = (baseUrl: string): AxiosInstance => {
 
     instance.interceptors.request.use(
         async (config) => {
-            // const tokenStorage = withLocalStorage<string>("token");
-            // const token = tokenStorage.get();
-            // console.log(token);
-            // if (token) {
-            //     config.headers.Authorization = `Bearer ${token}`;
-            // }
+            const tokenStorage = withLocalStorage<Token>("token");
+            const token = tokenStorage.get();
+            console.log(token);
+            if (token) {
+                config.headers.Authorization = `Bearer ${token.data}`;
+            }
             return config;
         },
         (error) => Promise.reject(error),
