@@ -12,6 +12,9 @@ import {authService} from "@/lib/api/auth";
 import {motion} from "framer-motion";
 import {Eye, EyeOff, Lock} from "lucide-react";
 import {useToast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
+import {withLocalStorage} from "@/lib/utils/localStorage";
+import {Token} from "@/lib/types/auth";
 
 const formSchema = z.object({
     identifier: z.string().email({
@@ -27,6 +30,7 @@ const LoginForm = () => {
     const [error, setError] = useState<string | null>();
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const { toast } = useToast();
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -45,8 +49,21 @@ const LoginForm = () => {
             toast({
                 variant: "default",
                 title: "Success!",
-                description: "You have successfully logged in.",
+                description: response.data.user.message,
             })
+            const tokenLocalStorage = withLocalStorage<Token>("token");
+            if(response.data.user.status === 202 && response.data.user.agent === false){
+                tokenLocalStorage.set({ data: response.data.user.token});
+                setTimeout(() => {
+                    router.push("/auth/otp")
+                }, 2000)
+            }
+            if(response.data.user.status === 200) {
+                tokenLocalStorage.set({ data: response.data.user.token});
+                setTimeout(() => {
+                    router.push("/auth/otp")
+                }, 2000)
+            }
             console.log(response)
         } catch (error: any) {
             if (error?.response?.status) {
