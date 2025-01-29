@@ -1,5 +1,5 @@
 import { authApi } from "@/lib/axios/service";
-import {LoginForm, RegisterForm, VerifyOTPForm} from "@/lib/types/auth";
+import {LoginForm, RegisterForm, ResendOTPForm, VerifyOTPForm} from "@/lib/types/auth";
 
 export const authService = {
     login: (data: LoginForm) =>
@@ -10,4 +10,6 @@ export const authService = {
         authApi.post("/auth/logout"),
     verifyOTP: (data: VerifyOTPForm) =>
         authApi.post("/verify/login", data),
+    reSendOTP: (data: ResendOTPForm) =>
+        authApi.post("/resent/otp/code", data),
 }

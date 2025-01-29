@@ -3,25 +3,57 @@
 import React, {useState, useEffect} from 'react';
 import {Timer, Mail} from 'lucide-react';
 import {withLocalStorage} from "@/lib/utils/localStorage";
-import {ResetCountdownOTP, VerifyOTPForm} from "@/lib/types/auth";
+import { VerifyOTPForm } from "@/lib/types/auth";
+import {ResetCountdownOTP, Token, UserID} from '@/lib/types/localStorage'
 import {authService} from "@/lib/api/auth";
 import {FormEvent} from "preact-compat";
 import {useToast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
 
 const OTPForm = () => {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [rememberMe, setRememberMe] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isDisabledButton, setIsDisabledButton] = useState(false);
     const [countDown, setCountDown] = useState(0);
-    const [error, setError] = useState('');
+    const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
+    const router = useRouter();
     const resetCountDownLocalStorage = withLocalStorage<ResetCountdownOTP>("resetCountdownOTP")
 
-    const handleResendOTP = () => {
+    const handleResendOTP = async () => {
         const expirationTime = Date.now() + 300000;
+        const userIdLocalStorage = withLocalStorage<UserID>("userId");
+        const userId = userIdLocalStorage.get();
         resetCountDownLocalStorage.set({data: expirationTime.toString()})
         setIsDisabledButton(true);
         setCountDown(300);
+        try{
+            const response = await authService.reSendOTP({user_id: userId?.data});
+            if(response.status === 200) {
+                toast({
+                    variant: "default",
+                    title: "Success!",
+                    description: response.data.message,
+                })
+                const OTPLocalStorage = withLocalStorage<Token>("OTP_token");
+                OTPLocalStorage.set({data: response.data.token});
+            }
+        }catch (error: any){
+            if(error?.response?.data?.message) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error!',
+                    description: error.response.data.message,
+                });
+            } else {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error!',
+                    description: error.message || "Network Error",
+                });
+            }
+        }
     };
 
     useEffect(() => {
@@ -63,6 +95,7 @@ const OTPForm = () => {
     };
 
     const handleSubmit = async (e: FormEvent) => {
+        setError(null)
         e.preventDefault();
         const otpValue = otp.join('');
 
@@ -71,12 +104,22 @@ const OTPForm = () => {
             return;
         }
         const payload: VerifyOTPForm = {
-            otp: otpValue
+            otp: otpValue,
+            rememberMe: rememberMe
         }
         setIsLoading(true);
         try {
             const response = await authService.verifyOTP(payload);
-            console.log(response)
+            toast({
+                variant: "default",
+                title: "Success!",
+                description: response.data.message,
+            })
+            const tokenLocalStorage = withLocalStorage<Token>("token");
+            if(response.status === 200) {
+                tokenLocalStorage.set({data: response.data.response.token});
+                router.push("/");
+            }
         } catch (error: any) {
             if(error?.response?.data?.message) {
                 toast({
@@ -126,6 +169,21 @@ const OTPForm = () => {
                     </div>
 
                     {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+
+                    <div className="flex items-center justify-start space-x-2">
+                        {" "}
+                        {/* Added checkbox */}
+                        <input
+                            type="checkbox"
+                            id="remember-me"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                        />
+                        <label htmlFor="remember-me" className="text-sm text-gray-600 dark:text-gray-300">
+                            Remember me
+                        </label>
+                    </div>{" "}
 
                     <button
                         type="submit"

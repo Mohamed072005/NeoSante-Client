@@ -15,6 +15,7 @@ import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 import {withLocalStorage} from "@/lib/utils/localStorage";
 import {Token} from "@/lib/types/auth";
+import {UserID} from "@/lib/types/localStorage";
 
 const formSchema = z.object({
     identifier: z.string().email({
@@ -29,7 +30,7 @@ const LoginForm = () => {
     const [loading, setLoading] = useState<boolean>();
     const [error, setError] = useState<string | null>();
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const { toast } = useToast();
+    const {toast} = useToast();
     const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -51,20 +52,22 @@ const LoginForm = () => {
                 title: "Success!",
                 description: response.data.user.message,
             })
-            const tokenLocalStorage = withLocalStorage<Token>("token");
-            if(response.data.user.status === 202 && response.data.user.agent === false){
-                tokenLocalStorage.set({ data: response.data.user.token});
+            if (response.data.user.status === 202 && response.data.user.agent === false) {
+                const OTPLocalStorage = withLocalStorage<Token>("OTP_token");
+                const UserIDLocalStorage = withLocalStorage<UserID>("userId");
+                OTPLocalStorage.set({data: response.data.user.token});
+                UserIDLocalStorage.set({data: response.data.user.user.id});
                 setTimeout(() => {
                     router.push("/auth/otp")
                 }, 2000)
             }
-            if(response.data.user.status === 200) {
-                tokenLocalStorage.set({ data: response.data.user.token});
+            if (response.data.user.status === 200) {
+                const tokenLocalStorage = withLocalStorage<Token>("token");
+                tokenLocalStorage.set({data: response.data.user.token});
                 setTimeout(() => {
-                    router.push("/auth/otp")
+                    router.push("/")
                 }, 2000)
             }
-            console.log(response)
         } catch (error: any) {
             if (error?.response?.status) {
                 setError(error.response.data.error ? error.response.data.error : error.response.data.message);
@@ -73,11 +76,11 @@ const LoginForm = () => {
                     title: "Error",
                     description: error.response.data.error ? error.response.data.error : error.response.data.message,
                 })
-            }else {
+            } else {
                 toast({
                     variant: "destructive",
                     title: "Error",
-                    description: error?.message || 'Network eError',
+                    description: error?.message || 'Network Error',
                 })
             }
         } finally {
