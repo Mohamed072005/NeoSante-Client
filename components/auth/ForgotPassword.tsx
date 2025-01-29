@@ -35,7 +35,6 @@ const ForgotPassword = () => {
     });
 
     const handelSubmit = async (value: z.infer<typeof formSchema>) => {
-        console.log(value);
         setLoading(true);
         setError(null);
         const data: ResetPasswordForm = {
