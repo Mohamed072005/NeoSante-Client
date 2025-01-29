@@ -11,12 +11,9 @@ export interface RegisterForm {
 
 export  interface VerifyOTPForm {
     otp: string;
+    rememberMe: boolean;
 }
 
-export interface Token {
-    data: string;
-}
-
-export interface ResetCountdownOTP {
-    data: string;
+export interface ResendOTPForm {
+    user_id: string;
 }

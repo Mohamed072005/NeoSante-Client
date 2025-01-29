@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import {withLocalStorage} from "@/lib/utils/localStorage";
-import {Token} from "@/lib/types/auth";
+import {Token} from "@/lib/types/localStorage";
 
 const createApiInstance = (baseUrl: string): AxiosInstance => {
     const instance = axios.create({
@@ -13,8 +13,8 @@ const createApiInstance = (baseUrl: string): AxiosInstance => {
     instance.interceptors.request.use(
         async (config) => {
             const tokenStorage = withLocalStorage<Token>("token");
-            const token = tokenStorage.get();
-            console.log(token);
+            const OTPTokenStorage = withLocalStorage<Token>("OTP_token");
+            const token = tokenStorage.get() || OTPTokenStorage.get();
             if (token) {
                 config.headers.Authorization = `Bearer ${token.data}`;
             }

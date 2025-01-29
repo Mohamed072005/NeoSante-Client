@@ -113,7 +113,6 @@ const RegisterForm = () => {
                 })
             }
         } catch (error: any) {
-            console.log(error)
             if (error.response?.status) {
                 setError(error.response.data.error || error.response.data.message || error.response.data.errorMessage)
                 toast({
