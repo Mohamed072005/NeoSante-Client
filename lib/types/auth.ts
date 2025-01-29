@@ -17,3 +17,7 @@ export  interface VerifyOTPForm {
 export interface ResendOTPForm {
     user_id: string;
 }
+
+export interface ResetPasswordForm {
+    identifier: string;
+}
