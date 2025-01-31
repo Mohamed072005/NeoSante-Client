@@ -32,12 +32,12 @@ const AuthPage = () => {
                             }}
                             className="flex items-center gap-2 text-primary mb-2"
                         >
-                            <HeartPulse className="h-8 w-8 text-green-500"/>
+                            <HeartPulse data-testid="heart-pulse-icon" className="h-8 w-8 text-green-500"/>
                             <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-green-600 to-emerald-800 bg-clip-text text-transparent">
                                 NéoSanté
                             </h2>
                         </motion.div>
-                        <CardDescription className="text-center text-base">
+                        <CardDescription data-testid="tab-description" className="text-center text-base">
                             {activeTab === "login" && "Access your healthcare dashboard"}
                             {activeTab === "register" && "Join our healthcare platform"}
                             {activeTab === "forgot" && "Reset your account password"}
@@ -62,7 +62,7 @@ const AuthPage = () => {
                                         <LoginForm />
                                     </TabsContent>
                                     <TabsContent value="register" className="mt-0">
-                                        <RegisterForm moveToLoginTab={() => setActiveTab('login')} />
+                                        <RegisterForm />
                                     </TabsContent>
                                     <TabsContent value="forgot" className="mt-0">
                                         <ForgotPassword />
