@@ -33,7 +33,7 @@ const MainNav = () => {
                 >
                     <HeartPulse className="h-7 w-7 text-green-500 dark:text-green-400" />
                 </motion.div>
-                <span className="font-bold text-xl inline-block bg-gradient-to-r from-green-600 to-emerald-800 bg-clip-text text-transparent dark:from-green-400 dark:to-green-300">
+                <span data-testid="nav-platform-name" className="font-bold text-xl inline-block bg-gradient-to-r from-green-600 to-emerald-800 bg-clip-text text-transparent dark:from-green-400 dark:to-green-300">
           NéoSanté
         </span>
             </Link>

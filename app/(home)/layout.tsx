@@ -1,6 +1,5 @@
 import MainNav from "@/components/home/MainNav";
 import ThemeToggle from "@/components/theme/ThemeToggle";
-import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Layout({children}: {
@@ -15,7 +14,7 @@ export default function Layout({children}: {
                     <div className="flex items-center gap-4">
                         <ThemeToggle/>
                         {/*<Button className=" bg-red-500 ml-2">*/}
-                            <Link href="/auth" className="border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground py-2 px-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
+                            <Link data-testid="auth-link" href="/auth" className="border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground py-2 px-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
                                 Log In
                             </Link>
                         {/*</Button>*/}
