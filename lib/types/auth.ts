@@ -21,3 +21,22 @@ export interface ResendOTPForm {
 export interface ResetPasswordForm {
     identifier: string;
 }
+
+export interface Role {
+    id: number;
+    name: string;
+    permissions: string[];
+}
+
+export interface User {
+    id: string;
+    email: string;
+    role: Role;
+}
+
+export interface AuthState {
+    isAuthenticated: boolean;
+    user: User | null;
+    checkAuth: () => void;
+    isLoading: boolean;
+}
