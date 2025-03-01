@@ -1,17 +1,26 @@
 import { authApi } from "@/lib/axios/service";
-import {LoginForm, RegisterForm, ResendOTPForm, ResetPasswordForm, VerifyOTPForm} from "@/lib/types/auth";
+import {
+    AskResetPasswordForm,
+    LoginForm,
+    RegisterForm,
+    ResendOTPForm,
+    ResetPasswordForm,
+    VerifyOTPForm
+} from "@/lib/types/auth";
 
 export const authService = {
     login: (data: LoginForm) =>
-        authApi.post("/login", data),
+        authApi.post("/auth/login", data),
     register: (data: RegisterForm) =>
-        authApi.post("/register", data),
+        authApi.post("/auth/register", data),
     logout: () =>
         authApi.post("/auth/logout"),
     verifyOTP: (data: VerifyOTPForm) =>
-        authApi.post("/verify/login", data),
+        authApi.post("/auth/verify-device", data),
     reSendOTP: (data: ResendOTPForm) =>
-        authApi.post("/resent/otp/code", data),
+        authApi.post("/auth/resend/otp", data),
+    askResetPassword: (data: AskResetPasswordForm) =>
+        authApi.post("/auth/ask/reset/password", data),
     resetPassword: (data: ResetPasswordForm) =>
-        authApi.post("/ask/reset/password", data),
+        authApi.post("/auth/reset/password", data),
 }

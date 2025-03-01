@@ -17,7 +17,7 @@ interface JWTPayload {
 
 const useAuthStore = create<AuthState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             user: null,
             isAuthenticated: false,
             isLoading: true,
@@ -47,7 +47,7 @@ const useAuthStore = create<AuthState>()(
                             email: decodedToken.identifier.email,
                             role: decodedToken.identifier.role
                         }})
-                }catch(err: any){
+                }catch(err: unknown){
                     set({isAuthenticated: false, user: null, isLoading: false});
                 }
             },

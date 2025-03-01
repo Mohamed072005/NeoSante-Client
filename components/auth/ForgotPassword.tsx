@@ -11,6 +11,7 @@ import {Button} from "@/components/ui/button";
 import {authService} from "@/lib/api/auth";
 import {ResetPasswordForm} from "@/lib/types/auth";
 import {useToast} from "@/hooks/use-toast";
+import {handleError} from "@/lib/utils/handleError";
 
 const formSchema = z.object({
     email: z.string().email({
@@ -38,32 +39,27 @@ const ForgotPassword = () => {
         setLoading(true);
         setError(null);
         const data: ResetPasswordForm = {
-            identifier: value.email,
+            email: value.email,
         }
         try{
-            const response = await authService.resetPassword(data);
+            const response = await authService.askResetPassword(data);
             toast({
                 variant: "default",
                 title: "Success!",
                 description: response.data.message,
             })
-        }catch(err:any){
-            if (err?.response?.data){
-                console.log(err.response.data.message);
-                toast({
-                    variant: "destructive",
-                    title: "Error!",
-                    description: err.response.data.message,
-                })
-                setError({ message: err.response.data.message });
-            }else {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error!',
-                    description: err.message || "Network Error",
-                });
-                setError({ message: err.message || "Network Error" });
-            }
+        }catch(err: unknown){
+            const {message, constraints} = handleError(err);
+            setError({
+                message: message
+            } as Error);
+            toast({
+                variant: "destructive",
+                title: message,
+                description: Array.isArray(constraints)
+                    ? constraints[0]
+                    : constraints || "An error occurred",
+            });
         }finally{
             setLoading(false);
         }
