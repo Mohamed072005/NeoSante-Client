@@ -3,17 +3,7 @@ import {createJSONStorage, persist} from "zustand/middleware";
 import {jwtDecode} from "jwt-decode";
 import {withLocalStorage} from "@/lib/utils/localStorage";
 import {Token} from "@/lib/types/localStorage";
-import {AuthState, Role} from "@/lib/types/auth";
-
-interface JWTPayload {
-    exp: number;
-    iat: number;
-    identifier: {
-        id: string;
-        email: string;
-        role: Role;
-    }
-}
+import {AuthState, JWTPayload} from "@/lib/types/auth";
 
 const useAuthStore = create<AuthState>()(
     persist(
@@ -26,6 +16,7 @@ const useAuthStore = create<AuthState>()(
                     set({ isLoading: true });
                     const tokenLocalStorage = withLocalStorage<Token>("token");
                     const token = tokenLocalStorage.get();
+                    console.log(token);
                     if(!token) {
                         set({isAuthenticated: false, user: null, isLoading: false});
                         return;
@@ -43,11 +34,12 @@ const useAuthStore = create<AuthState>()(
                         isAuthenticated: true,
                         isLoading: false,
                         user: {
-                            id: decodedToken.identifier.id,
-                            email: decodedToken.identifier.email,
-                            role: decodedToken.identifier.role
+                            user_id: decodedToken.user_id,
+                            role: decodedToken.user_role,
+                            permissions: decodedToken.user_permissions
                         }})
                 }catch(err: unknown){
+                    console.log(err);
                     set({isAuthenticated: false, user: null, isLoading: false});
                 }
             },

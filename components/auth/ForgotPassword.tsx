@@ -9,7 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons/icons";
 import {Button} from "@/components/ui/button";
 import {authService} from "@/lib/api/auth";
-import {ResetPasswordForm} from "@/lib/types/auth";
+import {AskResetPasswordForm} from "@/lib/types/auth";
 import {useToast} from "@/hooks/use-toast";
 import {handleError} from "@/lib/utils/handleError";
 
@@ -38,7 +38,7 @@ const ForgotPassword = () => {
     const handelSubmit = async (value: z.infer<typeof formSchema>) => {
         setLoading(true);
         setError(null);
-        const data: ResetPasswordForm = {
+        const data: AskResetPasswordForm = {
             email: value.email,
         }
         try{

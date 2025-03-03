@@ -11,7 +11,6 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
     const router = useRouter();
     const pathName = usePathname()
     useEffect(() => {
-        console.log("routeGuard", pathName);
         StorageGuard.clearRouteStorages(pathName)
     }, [pathName, router]);
     return (

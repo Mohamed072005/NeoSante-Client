@@ -169,7 +169,7 @@ const MainNav = () => {
                     </NavigationMenuItem>
                     {isAuthenticated && (
                         <>
-                            {user?.role.name !== 'User' && (
+                            {user?.role !== 'User' && (
                                 <NavigationMenuItem>
                                     <Link href="/dashboard" legacyBehavior passHref>
                                         <NavigationMenuLink

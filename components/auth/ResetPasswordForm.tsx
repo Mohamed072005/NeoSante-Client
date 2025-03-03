@@ -55,7 +55,7 @@ const ResetPasswordForm = () => {
                 description: response.data.message,
                 variant: "default",
             })
-            router.push("/");
+            router.replace("/auth");
         } catch (error: unknown) {
             const { message, constraints } = handleError(error);
             toast({

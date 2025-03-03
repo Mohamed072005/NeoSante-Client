@@ -34,13 +34,25 @@ export interface ResetPasswordForm {
 export interface Role {
     id: number;
     name: string;
-    permissions: string[];
+    permissions: RolePermissions[];
 }
 
 export interface User {
-    id: string;
-    email: string;
-    role: Role;
+    user_id: string;
+    permissions: RolePermissions[];
+    role: string;
+}
+
+export interface RolePermissions {
+    permission: string;
+}
+
+export interface JWTPayload {
+    exp: number;
+    iat: number;
+    user_id: string;
+    user_role: string;
+    user_permissions: RolePermissions[];
 }
 
 export interface AuthState {

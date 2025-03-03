@@ -5,6 +5,7 @@ import useAuthStore from "@/store/authStore";
 
 const AuthButton: React.FC = () => {
     const { isAuthenticated } = useAuthStore();
+    console.log(isAuthenticated);
     return (
         <>
             {!isAuthenticated && (
