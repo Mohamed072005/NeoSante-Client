@@ -10,36 +10,9 @@ import {Button} from "@/components/ui/button"
 import {Icons} from "@/components/icons/icons"
 import {authService} from "@/lib/api/auth"
 import {motion} from "framer-motion"
-import {Check, ChevronsUpDown, Eye, EyeOff, Lock} from 'lucide-react'
+import {Eye, EyeOff, Lock} from 'lucide-react'
 import {useToast} from "@/hooks/use-toast"
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-} from "@/components/ui/command"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import {cn} from "@/lib/utils"
-
-const countries = [
-    {label: "United States", value: "US"},
-    {label: "Canada", value: "CA"},
-    {label: "United Kingdom", value: "GB"},
-    {label: "Australia", value: "AU"},
-    {label: "Germany", value: "DE"},
-    {label: "France", value: "FR"},
-    {label: "Spain", value: "ES"},
-    {label: "Italy", value: "IT"},
-    {label: "Japan", value: "JP"},
-    {label: "Brazil", value: "BR"},
-    {label: "Morocco", value: "MR"}
-    // Add more countries as needed
-]
+import {handleError} from "@/lib/utils/handleError";
 
 const formSchema = z.object({
     first_name: z.string().min(2, {
@@ -54,24 +27,15 @@ const formSchema = z.object({
     password: z.string().min(6, {
         message: "Password must be at least 6 characters.",
     }),
-    phone_number: z.string().min(8, {
+    phone_number: z.string().min(10, {
         message: "Phone number must be in a valid Morocco format",
     }),
     cin_number: z.string().min(8, {
         message: "Cin number must be in a valid Morocco format",
-    }).min(6, {
-        message: "Cin number must be in a valid Morocco format",
-    }),
-    country: z.string({
-        required_error: "Please select a country.",
     }),
     city: z.string().min(3, {
         message: "City must be in a valid Morocco format",
-    }),
-    address: z.string().min(5, {
-        message: "Address must be at least 5 characters.",
     })
-
 })
 
 const RegisterForm = () => {
@@ -79,7 +43,6 @@ const RegisterForm = () => {
     const [error, setError] = useState<string | null>(null)
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const {toast} = useToast()
-    const [open, setOpen] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -88,9 +51,7 @@ const RegisterForm = () => {
             last_name: "",
             email: "",
             password: "",
-            country: "",
             city: "",
-            address: "",
             phone_number: "",
             cin_number: "",
         }
@@ -106,28 +67,20 @@ const RegisterForm = () => {
                 title: "Success",
                 description: "Registration successful!",
             })
-            if(response.status === 200){
-                toast({
-                    title: "Success",
-                    description: response.data.message,
-                })
-            }
-        } catch (error: any) {
-            if (error.response?.status) {
-                setError(error.response.data.error || error.response.data.message || error.response.data.errorMessage)
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: error.response.data.error || error.response.data.message || error.response.data.errorMessage,
-                })
-            }else {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: error?.message || 'Network eError',
-                })
-            }
-
+            toast({
+                title: "Success",
+                description: response.data.message,
+            })
+        } catch (error: unknown) {
+            const { message, constraints } = handleError(error);
+            setError(message);
+            toast({
+                variant: "destructive",
+                title: message,
+                description: Array.isArray(constraints)
+                    ? constraints[0]
+                    : constraints || "An error occurred",
+            })
         } finally {
             setLoading(false)
         }
@@ -244,66 +197,6 @@ const RegisterForm = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <FormField
                             control={form.control}
-                            name="country"
-                            render={({field}) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel className="mb-2.5">Country</FormLabel>
-                                    <Popover open={open} onOpenChange={setOpen}>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    role="combobox"
-                                                    aria-expanded={open}
-                                                    className={cn(
-                                                        "w-full justify-between",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value
-                                                        ? countries.find(
-                                                            (country) => country.value === field.value
-                                                        )?.label
-                                                        : "Select country"}
-                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-full p-0">
-                                            <Command>
-                                                <CommandInput placeholder="Search country..."/>
-                                                <CommandEmpty>No country found.</CommandEmpty>
-                                                <CommandGroup className="max-h-[200px] overflow-auto">
-                                                    {countries.map((country) => (
-                                                        <CommandItem
-                                                            value={country.label}
-                                                            key={country.value}
-                                                            onSelect={() => {
-                                                                form.setValue("country", country.value)
-                                                                setOpen(false)
-                                                            }}
-                                                        >
-                                                            <Check
-                                                                className={cn(
-                                                                    "mr-2 h-4 w-4",
-                                                                    field.value === country.value
-                                                                        ? "opacity-100"
-                                                                        : "opacity-0"
-                                                                )}
-                                                            />
-                                                            {country.label}
-                                                        </CommandItem>
-                                                    ))}
-                                                </CommandGroup>
-                                            </Command>
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
                             name="cin_number"
                             render={({field}) => (
                                 <FormItem>
@@ -315,9 +208,6 @@ const RegisterForm = () => {
                                 </FormItem>
                             )}
                         />
-
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
                         <FormField
                             control={form.control}
                             name="city"
@@ -326,19 +216,6 @@ const RegisterForm = () => {
                                     <FormLabel>City</FormLabel>
                                     <FormControl>
                                         <Input placeholder="city" disabled={loading} {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="address"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="address" disabled={loading} {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
@@ -358,26 +235,6 @@ const RegisterForm = () => {
                         </Button>
                 </form>
             </Form>
-            <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t"/>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-                </div>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-                <Button variant="outline" disabled={loading}>
-                    <Icons.gitHub className="mr-2 h-4 w-4"/>
-                    Github
-                </Button>
-                <Button variant="outline" disabled={loading}>
-                    <Icons.google className="mr-2 h-4 w-4"/>
-                    Google
-                </Button>
-            </div>
         </motion.div>
     )
 }

@@ -14,7 +14,8 @@ const createApiInstance = (baseUrl: string): AxiosInstance => {
         async (config) => {
             const tokenStorage = withLocalStorage<Token>("token");
             const OTPTokenStorage = withLocalStorage<Token>("OTP_token");
-            const token = tokenStorage.get() || OTPTokenStorage.get();
+            const resetPasswordTokenStorage = withLocalStorage<Token>("resetPasswordToken");
+            const token = resetPasswordTokenStorage.get() || tokenStorage.get() || OTPTokenStorage.get();
             if (token) {
                 config.headers.Authorization = `Bearer ${token.data}`;
             }
@@ -37,7 +38,7 @@ const createApiInstance = (baseUrl: string): AxiosInstance => {
 }
 
 const SERVERS = {
-    AUTH: process.env.NEXT_PUBLIC_AUTH_SERVICE_URL
+    AUTH: process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || 'http://localhost:5000/auth/'
 }
 
 export const authApi = createApiInstance(SERVERS.AUTH);
