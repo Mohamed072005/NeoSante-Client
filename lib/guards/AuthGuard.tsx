@@ -3,7 +3,6 @@
 import {useEffect, useState} from "react";
 import useAuthStore from "@/store/authStore";
 import {usePathname, useRouter} from "next/navigation";
-import {Loader2} from "lucide-react";
 import Loader from "@/components/home/Loader";
 
 interface AuthGuardProps {

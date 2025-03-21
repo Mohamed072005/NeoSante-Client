@@ -1,4 +1,4 @@
-import MainNav from "@/components/home/MainNav";
+import MainNav from "@/components/layout/main/MainNav";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import Link from "next/link";
 import AuthButton from "@/components/home/AuthButton";
