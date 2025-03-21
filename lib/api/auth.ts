@@ -10,17 +10,17 @@ import {
 
 export const authService = {
     login: (data: LoginForm) =>
-        authApi.post("/auth/login", data),
+        authApi.post("/login", data),
     register: (data: RegisterForm) =>
-        authApi.post("/auth/register", data),
+        authApi.post("/register", data),
     logout: () =>
-        authApi.post("/auth/logout"),
+        authApi.post("/logout"),
     verifyOTP: (data: VerifyOTPForm) =>
-        authApi.post("/auth/verify-device", data),
+        authApi.post("/verify-device", data),
     reSendOTP: (data: ResendOTPForm) =>
-        authApi.post("/auth/resend/otp", data),
+        authApi.post("/resend/otp", data),
     askResetPassword: (data: AskResetPasswordForm) =>
-        authApi.post("/auth/ask/reset/password", data),
+        authApi.post("/ask/reset/password", data),
     resetPassword: (data: ResetPasswordForm) =>
-        authApi.post("/auth/reset/password", data),
+        authApi.post("/reset/password", data),
 }

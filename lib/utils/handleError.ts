@@ -7,27 +7,27 @@ import { ExceptionError } from "@/lib/types/error"; // Adjust the import based o
  * @returns An object containing the error message and constraints.
  */
 export function handleError(error: unknown): {
-    message: string;
+    message: string | string[];
     constraints?: string | string[];
 } {
-    // Handle `ExceptionError`
     if (isExceptionError(error)) {
         const { data } = error.response;
 
-        // Extract the first error's constraints (if available)
-        const errorConstraints = data.errors?.[0]?.constraints;
-
-        // Log errors for debugging
-        if (data.errors) {
-            data.errors.forEach((err) => {
-                console.log(`Field: ${err.field}, Constraints: ${err.constraints}`);
-            });
+        // Check if the message is an array
+        if (Array.isArray(data.message)) {
+            // Return the array of error messages
+            console.log("this is an errro")
+            return {
+                message: data.message[0] as string, // Array of error messages
+                constraints: data.message[0] as string, // Optional: You can also return constraints if needed
+            };
+        } else {
+            // Handle non-array messages
+            return {
+                message: data.message || "An error occurred",
+                constraints: data.message,
+            };
         }
-
-        return {
-            message: data.message || "An error occurred",
-            constraints: errorConstraints,
-        };
     } else {
         // Handle non-`ExceptionError` errors
         const err = error as Error;

@@ -27,9 +27,9 @@ const createApiInstance = (baseUrl: string): AxiosInstance => {
     instance.interceptors.response.use(
         (response) => response,
         async (error) => {
-            // if (error.response?.status === 401) {
-            //     window.location.href = '/auth/login';
-            // }
+            if (error.response?.status === 401 && (error.response?.data?.message === 'Invalid token' || error.response?.data?.message === 'Token not provided')) {
+                window.location.href = '/auth';
+            }
             return Promise.reject(error);
         }
     )
@@ -38,7 +38,13 @@ const createApiInstance = (baseUrl: string): AxiosInstance => {
 }
 
 const SERVERS = {
-    AUTH: process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || 'http://localhost:5000/auth/'
+    AUTH: process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || 'http://localhost:5000/auth',
+    PHARMACY: process.env.NEXT_PUBLIC_PHARMACY_SERVICE_URL || 'http://localhost:5000/pharmacy',
+    PRODUCT: process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || 'http://localhost:5000/product',
+    CATEGORY: process.env.NEXT_PUBLIC_CATEGORY_SERVICE_URL || 'http://localhost:5000/category',
 }
 
 export const authApi = createApiInstance(SERVERS.AUTH);
+export const pharmacyApi = createApiInstance(SERVERS.PHARMACY);
+export const productApi = createApiInstance(SERVERS.PRODUCT);
+export const categoryApi = createApiInstance(SERVERS.CATEGORY);

@@ -16,14 +16,12 @@ const useAuthStore = create<AuthState>()(
                     set({ isLoading: true });
                     const tokenLocalStorage = withLocalStorage<Token>("token");
                     const token = tokenLocalStorage.get();
-                    console.log(token);
                     if(!token) {
                         set({isAuthenticated: false, user: null, isLoading: false});
                         return;
                     }
 
                     const decodedToken = jwtDecode<JWTPayload>(token.data);
-                    console.log(decodedToken);
                     const currentDate = Date.now() / 1000;
                     if(decodedToken.exp < currentDate) {
                         tokenLocalStorage.remove();

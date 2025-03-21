@@ -22,7 +22,7 @@ const MainNav = () => {
     const {user, isAuthenticated} = useAuthStore();
     return (
         <div className="flex items-center space-x-6">
-            <Link href="/" className="flex items-center space-x-2 relative">
+            <Link href="/public" className="flex items-center space-x-2 relative">
                 <motion.div
                     animate={{
                         scale: isHovered ? 1.1 : 1,
@@ -183,6 +183,19 @@ const MainNav = () => {
                                     </Link>
                                 </NavigationMenuItem>
                             )}
+                        </>
+                    )}
+                    {user?.role === 'User' && (
+                        <>
+                            <NavigationMenuItem>
+                                <Link href='/pharmacy/register' legacyBehavior passHref>
+                                    <NavigationMenuLink
+                                        className='border border-input bg-background shadow-sm hover:bg-emerald-800 hover:text-accent-foreground py-2 px-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0'
+                                    >
+                                        Become Pharmacies
+                                    </NavigationMenuLink>
+                                </Link>
+                            </NavigationMenuItem>
                         </>
                     )}
                 </NavigationMenuList>
