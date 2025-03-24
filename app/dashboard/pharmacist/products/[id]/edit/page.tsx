@@ -1,9 +1,9 @@
 "use client"
 
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {useProductsContext} from "@/context/ProductsContext";
-import {Product, ProductFormData, ProductFormValues} from "@/lib/types/product";
+import {Product, ProductFormValues} from "@/lib/types/product";
 import {useToast} from "@/hooks/use-toast";
 import {usePharmaciesContext} from "@/context/PharmaciesContext";
 import {Icons} from "@/components/icons/icons";

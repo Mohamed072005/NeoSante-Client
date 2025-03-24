@@ -60,6 +60,12 @@ export interface UseProductAPI {
     createProduct: (product: ProductFormValues) => Promise<AxiosResponse<any, any>>;
     fetchPharmacistProducts: () => Promise<AxiosResponse<any, any>>;
     getPharmacyProduct: (product_id: string) => Promise<AxiosResponse<any, any>>;
-    updateProduct: (product: ProductFormData, product_id: string) => Promise<AxiosResponse<any, any>>;
+    updateProduct: (product: ProductFormValues, product_id: string) => Promise<AxiosResponse<any, any>>;
+    fetchProductsForClients: (page: number, limit: number, filters: {
+        searchQuery?: string;
+        category?: string;
+        stock?: string;
+        prescription?: string;
+    }) => Promise<AxiosResponse<any, any>>;
 }
 
