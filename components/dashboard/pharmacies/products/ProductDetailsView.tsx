@@ -28,7 +28,7 @@ import {
     ShoppingCart,
     Heart,
     Share2,
-    Building
+    Building, MapPin
 } from "lucide-react"
 import type {Product} from "@/lib/types/product"
 import {format} from "date-fns"
@@ -284,6 +284,16 @@ export function ProductDetailView({product, isLoading = false, viewType = "user"
                                         <span>{product.pharmacyId.name}</span>
                                     </div>
                                 </motion.div>
+                                    <motion.div variants={itemVariants}>
+                                        <h3 className="text-sm font-medium text-muted-foreground mt-4">Pharmacy Address</h3>
+                                        <div className="flex items-center gap-2">
+                                            <MapPin className="h-4 w-4 text-muted-foreground"/>
+                                            <div>
+                                                <p>City: {product.pharmacyId.address.city}</p>
+                                                <p>Street: {product.pharmacyId.address.street}</p>
+                                            </div>
+                                        </div>
+                                    </motion.div>
                                 {isPharmacistView && (
                                     <>
                                         {product.barcode && isPharmacistView && (

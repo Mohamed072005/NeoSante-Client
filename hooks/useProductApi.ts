@@ -66,12 +66,44 @@ export const useProductApi = (): UseProductAPI => {
         }
     }
 
+    const fetchProductsForClients = async (
+        page: number,
+        limit: number,
+        filters: {
+            searchQuery?: string;
+            category?: string;
+            stock?: string;
+            prescription?: string;
+        } = {}) => {
+        setLoading(true);
+        try {
+            const response = await productService.fetchProducts(
+                page,
+                limit,
+                filters.searchQuery,
+                filters.category === "all" ? undefined : filters.category,
+                filters.stock === "inStock" ? true :
+                    filters.stock === "outOfStock" ? false : undefined,
+                filters.prescription === "required" ? true :
+                    filters.prescription === "notRequired" ? false : undefined
+            );
+            return response;
+        }catch (e: unknown) {
+            const {message, constraints} = handleError(e);
+            setError(message as string);
+            setLoading(false);
+            throw constraints as string || message;
+        }finally {
+            setLoading(false);
+        }
+    }
     return {
         loading,
         error,
         createProduct,
         fetchPharmacistProducts,
         getPharmacyProduct,
-        updateProduct
+        updateProduct,
+        fetchProductsForClients
     }
 }

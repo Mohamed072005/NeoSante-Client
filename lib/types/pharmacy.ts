@@ -34,6 +34,8 @@ export interface Helpers {
 export interface PharmacyAddress {
     street: string;
     city: string;
+    longitude: number;
+    latitude: number;
 }
 
 export interface PharmacyOwner {

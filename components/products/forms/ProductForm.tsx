@@ -154,7 +154,7 @@ export function ProductForm({initialValues, onSubmit, isLoading = false, submitL
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {!initialValues && (
+                            {!initialValues?.name && (
                                 <FormField
                                     control={form.control}
                                     name="pharmacyId"
