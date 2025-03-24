@@ -22,7 +22,7 @@ const MainNav = () => {
     const {user, isAuthenticated} = useAuthStore();
     return (
         <div className="flex items-center space-x-6">
-            <Link href="/public" className="flex items-center space-x-2 relative">
+            <Link href="/" className="flex items-center space-x-2 relative">
                 <motion.div
                     animate={{
                         scale: isHovered ? 1.1 : 1,
@@ -56,7 +56,7 @@ const MainNav = () => {
                                 <li className="col-span-2">
                                     <NavigationMenuLink asChild>
                                         <Link
-                                            href="/pharmacies/search"
+                                            href="/find-pharmacies"
                                             className="flex items-center space-x-2 rounded-md p-3 hover:bg-accent"
                                         >
                                             <Search className="h-5 w-5 text-green-500"/>
