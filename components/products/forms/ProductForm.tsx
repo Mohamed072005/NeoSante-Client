@@ -14,11 +14,11 @@ import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Icons } from "@/components/icons/icons"
-import { productFormSchema, type ProductFormValues } from "@/lib/types/product"
+import {Product, productFormSchema, type ProductFormValues} from "@/lib/types/product"
 import {Category} from "@/lib/types/category";
 
 interface ProductFormProps {
-    initialValues?: Partial<ProductFormValues>
+    initialValues?: Product
     onSubmit: (data: ProductFormValues) => Promise<void>
     isLoading?: boolean
     submitLabel?: string
@@ -38,12 +38,12 @@ export function ProductForm({initialValues, onSubmit, isLoading = false, submitL
         defaultValues: {
             name: initialValues?.name || "",
             description: initialValues?.description || "",
-            pharmacyId: initialValues?.pharmacyId || (pharmacies.length > 0 ? pharmacies[0]._id : ""),
+            pharmacyId: initialValues?.pharmacyId?._id || (pharmacies.length > 0 ? pharmacies[0]._id : ""),
             image: initialValues?.image || "",
             stock: initialValues?.stock || 0,
             barcode: initialValues?.barcode || "",
             genericName: initialValues?.genericName || "",
-            categoryId: initialValues?.categoryId || (categories.length > 0 ? categories[0]._id : ""),
+            categoryId: initialValues?.category?._id || (categories.length > 0 ? categories[0]._id : ""),
             requiresPrescription: initialValues?.requiresPrescription || false,
             alternatives: initialValues?.alternatives || [],
         },
@@ -154,30 +154,32 @@ export function ProductForm({initialValues, onSubmit, isLoading = false, submitL
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField
-                                control={form.control}
-                                name="pharmacyId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Pharmacy *</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select pharmacy" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {pharmacies.map((pharmacy) => (
-                                                    <SelectItem key={pharmacy._id} value={pharmacy._id}>
-                                                        {pharmacy.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            {!initialValues && (
+                                <FormField
+                                    control={form.control}
+                                    name="pharmacyId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Pharmacy *</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select pharmacy" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {pharmacies.map((pharmacy) => (
+                                                        <SelectItem key={pharmacy._id} value={pharmacy._id}>
+                                                            {pharmacy.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
 
                             <FormField
                                 control={form.control}

@@ -26,6 +26,19 @@ export interface Product {
     updatedAt: string
 }
 
+export interface ProductFormData {
+    name: string
+    description: string
+    pharmacyId: string
+    image: string
+    stock: number
+    barcode: string
+    genericName?: string
+    category: string;
+    alternatives?: string[]
+    requiresPrescription: boolean
+}
+
 export const productFormSchema = z.object({
     name: z.string().min(2, { message: "Product name must be at least 2 characters" }),
     description: z.string().min(10, { message: "Description must be at least 10 characters" }),
@@ -46,5 +59,7 @@ export interface UseProductAPI {
     error: string | null;
     createProduct: (product: ProductFormValues) => Promise<AxiosResponse<any, any>>;
     fetchPharmacistProducts: () => Promise<AxiosResponse<any, any>>;
+    getPharmacyProduct: (product_id: string) => Promise<AxiosResponse<any, any>>;
+    updateProduct: (product: ProductFormData, product_id: string) => Promise<AxiosResponse<any, any>>;
 }
 

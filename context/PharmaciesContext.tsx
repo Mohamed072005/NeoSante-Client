@@ -1,6 +1,6 @@
 "use client"
 
-import {createContext, useContext, useEffect, useState} from "react";
+import {createContext, useContext, useEffect, useState, useCallback} from "react";
 import {Pharmacy} from "@/lib/types/pharmacy";
 import usePharmacyApi from "@/hooks/usePharmacyApi";
 
@@ -10,6 +10,7 @@ interface PharmaciesContextType {
     findPharmacyById: (id: string) => Promise<Pharmacy | null>;
     updatePharmacy: (pharmacyId: string, propertiesToUpdate: Partial<Pharmacy>) => void;
     removePharmacy: (pharmacyId: string) => void;
+    getPharmaciesIds: () => string[];
 }
 
 const PharmaciesContext = createContext<PharmaciesContextType | undefined>(undefined);
@@ -75,9 +76,16 @@ export const PharmaciesProvider = ({ children }: { children: React.ReactNode }) 
         });
     }
 
+    const getPharmaciesIds = useCallback((): string[] => {
+        if (!pharmacies) {
+            return [];
+        }
+        return pharmacies.map((pharmacy) => pharmacy._id);
+    }, [pharmacies]);
+
     return (
         <PharmaciesContext.Provider
-            value={{ pharmacies, setPharmaciesContextState, findPharmacyById, updatePharmacy, removePharmacy }}
+            value={{ pharmacies, setPharmaciesContextState, findPharmacyById, updatePharmacy, removePharmacy, getPharmaciesIds }}
         >
             {children}
         </PharmaciesContext.Provider>

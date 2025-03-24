@@ -36,10 +36,42 @@ export const useProductApi = (): UseProductAPI => {
         }
     }
 
+    const getPharmacyProduct = async (product_id: string) => {
+        setLoading(true);
+        try {
+            const response = await productService.getPharmacyProduct(product_id);
+            return response;
+        }catch (e: unknown) {
+            const {message, constraints} = handleError(e);
+            setError(message as string);
+            setLoading(false);
+            throw constraints as string || message;
+        }finally {
+            setLoading(false);
+        }
+    }
+
+    const updateProduct = async (product: ProductFormValues, product_id: string) => {
+        setLoading(true);
+        try {
+            const response = await productService.updateProduct(product, product_id);
+            return response;
+        }catch (e: unknown) {
+            const {message, constraints} = handleError(e);
+            setError(message as string);
+            setLoading(false);
+            throw constraints as string || message;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return {
         loading,
         error,
         createProduct,
-        fetchPharmacistProducts
+        fetchPharmacistProducts,
+        getPharmacyProduct,
+        updateProduct
     }
 }

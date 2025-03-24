@@ -87,7 +87,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             const response = await pharmacyService.updatePharmacy(id, pharmacy);
             return response;
         }catch (e) {
-            console.error(e);
+            console.log(e);
             const {message, constraints} = handleError(e);
             setError(message as string);
             throw constraints as string || message;

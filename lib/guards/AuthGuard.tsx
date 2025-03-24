@@ -2,25 +2,26 @@
 
 import {useEffect, useState} from "react";
 import useAuthStore from "@/store/authStore";
-import {usePathname, useRouter} from "next/navigation";
 import Loader from "@/components/home/Loader";
+import {usePathname} from "next/navigation";
 
 interface AuthGuardProps {
     children?: React.ReactNode
 }
 
 const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
-    const router = useRouter();
-    const pathName = usePathname()
-    const { checkAuth, isLoading } = useAuthStore();
+    const { checkAuth, isLoading, isAuthenticated } = useAuthStore();
+    const pathname = usePathname();
     const [isInitialized, setIsInitialized] = useState<boolean>(false);
     useEffect(() => {
-        const initialize = async () => {
-            await checkAuth();
-            setIsInitialized(true);
+        if (pathname === '/' || !isAuthenticated){
+            const initialize = async () => {
+                await checkAuth();
+                setIsInitialized(true);
+            }
+            initialize();
         }
-        initialize();
-    }, [router, pathName, checkAuth]);
+    }, [checkAuth, pathname]);
 
     if (isLoading || !isInitialized) {
         return (

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
-import {  useSearchParams } from "next/navigation"
+import {useRouter, useSearchParams} from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProductForm } from "@/components/products/forms/ProductForm"
 import type { ProductFormValues } from "@/lib/types/product"
@@ -22,6 +22,7 @@ export default function AddProductPage() {
     const { loading, createProduct, error } = useProductApi();
     const { pharmacies } = usePharmaciesContext()
     const { categories } = useCategoriesContext()
+    const router = useRouter()
 
     useEffect(() => {
     }, [toast])
@@ -48,10 +49,6 @@ export default function AddProductPage() {
             formData.append("image", productImageInput.files[0]);
         }
 
-        for (const [key, value] of formData.entries()) {
-            console.log(key, value)
-        }
-
         try {
             const response = await createProduct(formData);
             if (response?.data?.statusCode === 200) {
@@ -60,8 +57,8 @@ export default function AddProductPage() {
                     description: response?.data?.message,
                     variant: 'default'
                 })
+                router.replace("/dashboard/pharmacist/products");
             }
-            console.log(response);
         }catch (e: unknown) {
             toast({
                 title: "Error",

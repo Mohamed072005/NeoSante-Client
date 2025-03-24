@@ -14,6 +14,7 @@ import type { Product } from "@/lib/types/product"
 import {useCategoriesContext} from "@/context/CategoriesContext";
 import {usePharmaciesContext} from "@/context/PharmaciesContext";
 import {useProductApi} from "@/hooks/useProductApi";
+import {useProductsContext} from "@/context/ProductsContext";
 
 export default function ProductsPage() {
     const router = useRouter()
@@ -30,6 +31,7 @@ export default function ProductsPage() {
     const { categories } = useCategoriesContext()
     const { pharmacies } = usePharmaciesContext()
     const { fetchPharmacistProducts, loading, error } = useProductApi()
+    const { setProductsContextState } = useProductsContext()
 
     useEffect(() => {
         fetchProducts()
@@ -38,9 +40,11 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
         try {
             const response = await fetchPharmacistProducts()
-            console.log(response)
-            setProducts(response?.data?.products);
-            setFilteredProducts(response?.data?.products);
+            if (response?.data?.statusCode === 200) {
+                setProducts(response?.data?.products);
+                setFilteredProducts(response?.data?.products);
+                setProductsContextState(response?.data?.products);
+            }
         } catch (err: unknown) {
             console.log(err || error)
             toast({
@@ -276,8 +280,8 @@ export default function ProductsPage() {
                                 columns={ProductColumns({
                                     onDelete: handleDeleteProduct,
                                     onUpdateStock: handleUpdateStock,
-                                    onView: (id) => router.push(`/pharmacist/products/${id}`),
-                                    onEdit: (id) => router.push(`/pharmacist/products/${id}/edit`),
+                                    onView: (id) => router.push(`/dashboard/pharmacist/products/${id}`),
+                                    onEdit: (id) => router.push(`/dashboard//pharmacist/products/${id}/edit`),
                                     editingStockId: editingStockId,
                                     setEditingStockId: setEditingStockId,
                                     tempStockValue: tempStockValue,
