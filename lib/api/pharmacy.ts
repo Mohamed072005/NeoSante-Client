@@ -1,5 +1,5 @@
 import {pharmacyApi} from "@/lib/axios/service";
-import {PharmacyFormData} from "@/lib/types/pharmacy";
+import {FindPharmaciesSearchParams, PharmacyFormData} from "@/lib/types/pharmacy";
 
 export const pharmacyService = {
     askCreatePharmacy: (data: PharmacyFormData) =>
@@ -24,4 +24,16 @@ export const pharmacyService = {
         }),
     handleDeletePharmacy: (id: string) =>
         pharmacyApi.delete(`/delete/pharmacy/${id}`),
+    findPharmacies: (searchParams: FindPharmaciesSearchParams) => {
+        let queryString = `search=${encodeURIComponent(searchParams.search)}`;
+
+        if (searchParams?.filters?.openNow) {
+            queryString += `&openNow=true`;
+        }
+        if (searchParams?.filters?.nearby) {
+            queryString += `&nearby=true`;
+        }
+        return pharmacyApi.get(`/find/pharmacies?${queryString}`)
+    }
+
 }

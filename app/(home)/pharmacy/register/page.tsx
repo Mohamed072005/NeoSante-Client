@@ -1,7 +1,7 @@
 "use client"
 
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {PharmacyForm} from "@/components/pharmacy/forms/CreatePharmacyForm";
+import {PharmacyForm, PharmacyFormValues} from "@/components/pharmacy/forms/CreatePharmacyForm";
 import {PharmacyFormData} from "@/lib/types/pharmacy";
 import usePharmacyApi from "@/hooks/usePharmacyApi";
 import {useToast} from "@/hooks/use-toast";
@@ -13,13 +13,15 @@ const PharmacyRegistrationPage = () => {
     const { toast } = useToast()
     const router = useRouter();
 
-    const handleSubmit = async (data: PharmacyFormData ) => {
+    const handleSubmit = async (data: PharmacyFormValues ) => {
 
         const formData = new FormData();
 
         formData.append("name", data.name);
-        formData.append("city", data.city);
-        formData.append("street", data.street);
+        formData.append("city", data.address.city);
+        formData.append("street", data.address.street);
+        formData.append("lng", String(data.address.lng));
+        formData.append("lat", String(data.address.lat));
 
         const pharmacyImageInput = document.querySelector('input[id="pharmacy-image"]') as HTMLInputElement;
         if (pharmacyImageInput?.files?.[0]) {
@@ -39,15 +41,16 @@ const PharmacyRegistrationPage = () => {
                 formData.append("certificationImages", certificationImageInput.files[0]);
             }
         });
-
-        console.log(formData);
+        for(const [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
         try {
             const response = await createPharmacy(formData);
             if (response?.data?.statusCode === 201) {
                 toast({
                     variant: "default",
                     title: "Success!",
-                    description: response.data.message,
+                    description: `${response.data.message}, now wait the Admin confirmation`,
                 })
             }
             router.replace("/");
@@ -55,7 +58,7 @@ const PharmacyRegistrationPage = () => {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error,
+                description: e as string || error,
             })
         }
     }

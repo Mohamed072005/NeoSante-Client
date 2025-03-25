@@ -4,6 +4,8 @@ export interface PharmacyFormData {
     name: string;
     street: string;
     city: string;
+    lng: number;
+    lat: number;
     image: string;
     certifications: PharmacyCertification[];
 }
@@ -24,6 +26,7 @@ export interface UsePharmacyAPI {
     approvePharmacy: (id: string) => Promise<AxiosResponse<any, any>>;
     updatePharmacy: (id: string, data: PharmacyFormData) => Promise<AxiosResponse<any, any>>;
     deletePharmacy: (id: string) => Promise<AxiosResponse<any, any>>;
+    findPharmacies: (searchParams: FindPharmaciesSearchParams) => Promise<AxiosResponse<any, any>>;
 }
 
 export interface Helpers {
@@ -36,6 +39,13 @@ export interface PharmacyAddress {
     city: string;
     longitude: number;
     latitude: number;
+}
+
+export interface FindPharmaciesSearchParams {
+    search: string;
+    filters?: {
+        openNow: boolean;
+    }
 }
 
 export interface PharmacyOwner {

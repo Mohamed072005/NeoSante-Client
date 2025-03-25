@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
-import { Building2, Plus, Trash2, Upload, X, Calendar, Award } from "lucide-react"
+import {Building2, Plus, Trash2, Upload, X, Calendar, Award, MapPin} from "lucide-react"
 import { format } from "date-fns"
 
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons/icons"
 import {TimePickerInput} from "@/components/ui/time-picker-input";
+import {useGeolocation} from "@/hooks/useGeolocation";
+import {LocationPicker} from "@/components/pharmacy/LocationPicker";
 
 export const pharmacyFormSchema = z.object({
     name: z.string().min(2, { message: "Pharmacy name must be at least 2 characters" }),
@@ -25,6 +27,8 @@ export const pharmacyFormSchema = z.object({
         .object({
             city: z.string().min(2, { message: "City is required" }),
             street: z.string().min(2, { message: "Street address is required" }),
+            lng: z.number(),
+            lat: z.number(),
         }),
     image: z.string().min(1, { message: "Pharmacy image is required" }),
     workingHours: z.object({
@@ -70,7 +74,8 @@ interface PharmacyFormProps {
 export function PharmacyForm({initialValues, onSubmit, isLoading = false, submitLabel = "Submit", showTitle = true,}: PharmacyFormProps) {
     const { toast } = useToast()
     const [localLoading, setLocalLoading] = useState(false)
-    console.log(initialValues);
+    const { getCurrentPosition, loading: isGeoLoading } = useGeolocation();
+
 
     // Initialize the form
     const form = useForm<PharmacyFormValues>({
@@ -80,6 +85,8 @@ export function PharmacyForm({initialValues, onSubmit, isLoading = false, submit
             address: {
                 city: initialValues?.address?.city || "",
                 street: initialValues?.address?.street || "",
+                lat: initialValues?.address?.lat || 0,
+                lng: initialValues?.address?.lng || 0
             },
             image: initialValues?.image || "",
             workingHours: initialValues?.workingHours || {
@@ -128,6 +135,22 @@ export function PharmacyForm({initialValues, onSubmit, isLoading = false, submit
         } finally {
             setLocalLoading(false)
         }
+    }
+
+    const handleUseCurrentLocation = () => {
+        getCurrentPosition(
+            (position) => {
+                form.setValue("address.lat", position.coords.latitude)
+                form.setValue("address.lng", position.coords.longitude)
+            },
+            (error) => {
+                toast({
+                    title: "Location Error",
+                    description: error.message,
+                    variant: "destructive",
+                })
+            }
+        )
     }
 
     // Handle form submission
@@ -242,6 +265,73 @@ export function PharmacyForm({initialValues, onSubmit, isLoading = false, submit
                                         <FormLabel>Street Address *</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter street address" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-medium">Pharmacy Location</h3>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleUseCurrentLocation}
+                                disabled={isGeoLoading}
+                            >
+                                {isGeoLoading ? (
+                                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                    <MapPin className="mr-2 h-4 w-4" />
+                                )}
+                                Use Current Location
+                            </Button>
+                        </div>
+
+                        <LocationPicker
+                            latitude={form.watch("address.lat")}
+                            longitude={form.watch("address.lng")}
+                            onLocationChange={(lat, lng) => {
+                                form.setValue("address.lat", lat)
+                                form.setValue("address.lng", lng)
+                            }}
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="address.lat"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Latitude</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                step="0.000001"
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="address.lng"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Longitude</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                step="0.000001"
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

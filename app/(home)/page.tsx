@@ -69,7 +69,7 @@ export default function Home() {
                                             <Badge variant="secondary">Open Now</Badge>
                                             <Badge variant="outline">Products</Badge>
                                         </div>
-                                        <Link href="/pharmacies">
+                                        <Link href="/find-pharmacies">
                                             <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 dark:text-white">
                                                 Find Pharmacies
                                                 <ArrowRight className="ml-2 h-4 w-4" />

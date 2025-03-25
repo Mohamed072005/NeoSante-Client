@@ -88,7 +88,7 @@ const MainNav = () => {
                                 <li>
                                     <NavigationMenuLink asChild>
                                         <Link
-                                            href="/pharmacies/products"
+                                            href="/products"
                                             className="block select-none space-y-1 rounded-md p-3 hover:bg-accent"
                                         >
                                             <div className="flex items-center space-x-2">

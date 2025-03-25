@@ -13,10 +13,11 @@ export default function AddPharmacyPage() {
 
     const handleSubmit = async (data: PharmacyFormValues) => {
         const formData = new FormData();
-
         formData.append("name", data.name);
         formData.append("city", data.address.city);
         formData.append("street", data.address.street);
+        formData.append("lng", String(data.address.lng));
+        formData.append("lat", String(data.address.lat));
 
         const pharmacyImageInput = document.querySelector('input[id="pharmacy-image"]') as HTMLInputElement;
         if (pharmacyImageInput?.files?.[0]) {
@@ -37,7 +38,6 @@ export default function AddPharmacyPage() {
             }
         });
 
-        console.log(formData);
         try {
             const response = await createPharmacy(formData);
             if (response?.data?.statusCode === 201) {
@@ -53,7 +53,7 @@ export default function AddPharmacyPage() {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error,
+                description: error || e as string,
             })
         }
     }
