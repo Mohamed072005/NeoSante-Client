@@ -18,11 +18,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        working-directory: ./NeoSante-Client  # Specify correct path
         run: npm ci --legacy-peer-deps
 
       - name: Start the app in the background
-        working-directory: ./NeoSante-Client  # Specify correct path
         run: npm run dev &
         env:
           NODE_ENV: development
@@ -31,11 +29,9 @@ jobs:
         run: sleep 10
 
       - name: Install playwright browsers
-        working-directory: ./NeoSante-Client  # Specify correct path
         run: npx playwright install --with-deps
 
       - name: Run playwright tests
-        working-directory: ./NeoSante-Client  # Specify correct path
         run: npx playwright test
 
       - name: Upload test result
