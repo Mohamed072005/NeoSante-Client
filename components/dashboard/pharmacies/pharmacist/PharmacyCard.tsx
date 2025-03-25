@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Star, Clock, ShieldCheck, Building2Icon } from "lucide-react";
+import { MapPin, Phone, Clock, Building2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import type { Pharmacy } from '@/lib/types/pharmacy';
@@ -21,14 +21,11 @@ export function PharmacyCard({pharmacy, className, variant = 'default'}: Pharmac
         const currentDay = days[today];
 
         const daySchedule = pharmacy.workingHours[currentDay];
-        if (!daySchedule.is_open) return false;
 
         const now = new Date();
         const currentTime = now.getHours() * 60 + now.getMinutes();
-        const openTime = parseInt(daySchedule.open.split(':')[0]) * 60 +
-            parseInt(daySchedule.open.split(':')[1]);
-        const closeTime = parseInt(daySchedule.close.split(':')[0]) * 60 +
-            parseInt(daySchedule.close.split(':')[1]);
+        const openTime = parseInt(daySchedule.open.split(':')[0]) * 60 + parseInt(daySchedule.open.split(':')[1]);
+        const closeTime = parseInt(daySchedule.close.split(':')[0]) * 60 + parseInt(daySchedule.close.split(':')[1]);
 
         return currentTime >= openTime && currentTime <= closeTime;
     };
@@ -70,7 +67,7 @@ export function PharmacyCard({pharmacy, className, variant = 'default'}: Pharmac
                     <div className="flex items-center text-sm text-muted-foreground">
                         <MapPin className="h-4 w-4 mr-2" />
                         <span className="truncate">
-                            {pharmacy.address.street}, {pharmacy.address.city}
+                            {pharmacy.address.city}, {pharmacy.address.street}
                         </span>
                     </div>
 

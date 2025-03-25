@@ -20,6 +20,8 @@ const PharmacyRegistrationPage = () => {
         formData.append("name", data.name);
         formData.append("city", data.city);
         formData.append("street", data.street);
+        formData.append("lng", String(data.lng));
+        formData.append("lat", String(data.lat));
 
         const pharmacyImageInput = document.querySelector('input[id="pharmacy-image"]') as HTMLInputElement;
         if (pharmacyImageInput?.files?.[0]) {
@@ -39,8 +41,6 @@ const PharmacyRegistrationPage = () => {
                 formData.append("certificationImages", certificationImageInput.files[0]);
             }
         });
-
-        console.log(formData);
         try {
             const response = await createPharmacy(formData);
             if (response?.data?.statusCode === 201) {

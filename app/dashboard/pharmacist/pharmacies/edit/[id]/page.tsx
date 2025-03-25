@@ -65,6 +65,8 @@ export default function EditPharmacyPage() {
         formData.append("name", data.name);
         formData.append("city", data.address.city);
         formData.append("street", data.address.street);
+        formData.append("lng", String(data.address.lng));
+        formData.append("lat", String(data.address.lat));
 
         const pharmacyImageInput = document.querySelector('input[id="pharmacy-image"]') as HTMLInputElement;
         if (pharmacyImageInput?.files?.[0]) {

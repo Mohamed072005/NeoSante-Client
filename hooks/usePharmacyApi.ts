@@ -1,9 +1,9 @@
 "use client"
 
 import {useState} from "react";
-import {handleError} from "@/lib/utils/handleError";
 import {pharmacyService} from "@/lib/api/pharmacy";
-import {PharmacyFormData, UsePharmacyAPI} from "@/lib/types/pharmacy";
+import {FindPharmaciesSearchParams, PharmacyFormData, UsePharmacyAPI} from "@/lib/types/pharmacy";
+import {handleConstraintError} from "@/lib/utils/handleConstraintsErrors";
 
 const usePharmacyApi = (): UsePharmacyAPI => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -16,7 +16,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             setLoading(false);
             return response;
         }catch (e: unknown) {
-            const {message, constraints} = handleError(e);
+            const {message, constraints} = handleConstraintError(e);
             setError(message as string);
             setLoading(false);
             throw constraints as string || message;
@@ -32,7 +32,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             setLoading(false);
             return response;
         }catch (e: unknown) {
-            const {message, constraints} = handleError(e);
+            const {message, constraints} = handleConstraintError(e);
             setError(message as string);
             setLoading(false);
             throw constraints as string || message;
@@ -47,7 +47,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             const response = await pharmacyService.getPharmacyById(id);
             return response;
         }catch (e: unknown) {
-            const {message, constraints} = handleError(e);
+            const {message, constraints} = handleConstraintError(e);
             setError(message as string);
             throw constraints as string || message;
         }finally {
@@ -60,7 +60,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             const response = await pharmacyService.handleApprovePharmacy(id)
             return response;
         }catch (e: unknown) {
-            const {message, constraints} = handleError(e);
+            const {message, constraints} = handleConstraintError(e);
             setError(message as string);
             throw constraints as string || message;
         }
@@ -72,7 +72,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             const response = await pharmacyService.getPharmaciesForPharmacist(page, limit);
             return response;
         }catch (e) {
-            const {message, constraints} = handleError(e);
+            const {message, constraints} = handleConstraintError(e);
             setError(message as string);
             throw constraints as string || message;
         }finally {
@@ -88,7 +88,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             return response;
         }catch (e) {
             console.log(e);
-            const {message, constraints} = handleError(e);
+            const {message, constraints} = handleConstraintError(e);
             setError(message as string);
             throw constraints as string || message;
         }finally {
@@ -101,9 +101,23 @@ const usePharmacyApi = (): UsePharmacyAPI => {
             const response = await pharmacyService.handleDeletePharmacy(pharmacy_id);
             return response;
         }catch (e) {
-            const {message, constraints} = handleError(e);
+            const {message, constraints} = handleConstraintError(e);
             setError(message as string);
             throw constraints as string || message;
+        }
+    }
+
+    const findPharmacies = async (searchParams: FindPharmaciesSearchParams) => {
+        setLoading(true);
+        try {
+            const response = await pharmacyService.findPharmacies(searchParams);
+            return response;
+        }catch (e) {
+            const {message, constraints} = handleConstraintError(e);
+            setError(message as string);
+            throw constraints as string || message;
+        }finally {
+            setLoading(false);
         }
     }
 
@@ -115,6 +129,7 @@ const usePharmacyApi = (): UsePharmacyAPI => {
         fetchPharmacistPharmacies,
         updatePharmacy,
         deletePharmacy,
+        findPharmacies,
         loading,
         error
     }
