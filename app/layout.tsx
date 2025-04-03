@@ -4,6 +4,9 @@ import "./globals.css";
 import {ThemeProvider} from "@/components/theme/ThemeProvider";
 import {Toaster} from "@/components/ui/toaster";
 import RouteGuard from "@/lib/guards/RouteGuard";
+import AuthGuard from "@/lib/guards/AuthGuard";
+import {CategoriesProvider} from "@/context/CategoriesContext";
+import {ProductsProvider} from "@/context/ProductsContext";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -29,25 +32,31 @@ export default function RootLayout({children}: Readonly<{
         <body
             className={`${geistSans.variable} ${geistMono.variable}`}>
         <RouteGuard>
-            <ThemeProvider
-                attribute="class"
-                defaultTheme="dark"
-                enableSystem
-                disableTransitionOnChange
-                storageKey="neosante-theme"
-            >
-                <div
-                    className="absolute inset-0 bg-grid-primary/[0.02] -z-10"
-                    style={{
-                        backgroundImage: `linear-gradient(rgba(68, 149, 255, 0.05) 1px, transparent 1px),
+            <AuthGuard>
+                <CategoriesProvider>
+                    <ProductsProvider>
+                        <ThemeProvider
+                            attribute="class"
+                            defaultTheme="dark"
+                            enableSystem
+                            disableTransitionOnChange
+                            storageKey="neosante-theme"
+                        >
+                            <div
+                                className="absolute inset-0 bg-grid-primary/[0.02] -z-10"
+                                style={{
+                                    backgroundImage: `linear-gradient(rgba(68, 149, 255, 0.05) 1px, transparent 1px),
                            linear-gradient(90deg, rgba(68, 149, 255, 0.05) 1px, transparent 1px)`,
-                        backgroundSize: '20px 20px'
-                    }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent -z-10"/>
-                {children}
-                <Toaster/>
-            </ThemeProvider>
+                                    backgroundSize: '20px 20px'
+                                }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent -z-10"/>
+                            {children}
+                            <Toaster/>
+                        </ThemeProvider>
+                    </ProductsProvider>
+                </CategoriesProvider>
+            </AuthGuard>
         </RouteGuard>
 
         </body>

@@ -6,6 +6,8 @@ export class StorageGuard {
             localStorage.removeItem('OTP_token');
             localStorage.removeItem('token');
             localStorage.removeItem('userId');
+            localStorage.removeItem('auth-storage');
+            localStorage.removeItem('resetPasswordToken');
         }catch(err: any) {
             console.error('Error clearing auth storage:', err);
         }
@@ -24,6 +26,7 @@ export class StorageGuard {
         switch (route) {
             case '/':
                 this.clearOTPStorages();
+                localStorage.removeItem('resetPasswordToken');
                 break;
             case '/auth':
                 this.clearAuthStorages();

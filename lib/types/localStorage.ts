@@ -9,3 +9,7 @@ export interface ResetCountdownOTP {
 export interface UserID {
     data: string;
 }
+
+export interface ResetPasswordTokenStorage {
+    data: string;
+}

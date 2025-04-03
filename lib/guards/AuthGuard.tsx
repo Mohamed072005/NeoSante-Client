@@ -1,35 +1,36 @@
 "use client"
 
-import {useRouter} from "next/navigation";
-import {useEffect} from "react";
-import {withLocalStorage} from "@/lib/utils/localStorage";
-import {Token} from "@/lib/types/localStorage";
+import {useEffect, useState} from "react";
+import useAuthStore from "@/store/authStore";
+import Loader from "@/components/home/Loader";
+import {usePathname} from "next/navigation";
 
 interface AuthGuardProps {
     children?: React.ReactNode
 }
 
 const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
-    const router = useRouter()
-    const OTPTokenStorage = withLocalStorage<Token>("OTP_token");
+    const { checkAuth, isLoading, isAuthenticated } = useAuthStore();
+    const pathname = usePathname();
+    const [isInitialized, setIsInitialized] = useState<boolean>(false);
     useEffect(() => {
-        if (!checkOPTTrigger()){
-            router.replace("/auth");
+        if (pathname === '/' || !isAuthenticated){
+            const initialize = async () => {
+                await checkAuth();
+                setIsInitialized(true);
+            }
+            initialize();
         }
-    }, []);
+    }, [checkAuth, pathname]);
 
-    const checkOPTTrigger = () => {
-        return !!OTPTokenStorage.get();
+    if (isLoading || !isInitialized) {
+        return (
+            <Loader />
+        )
     }
-
-    if (!OTPTokenStorage.get()) {
-        return null;
-    }
-    return (
-        <>
-            {children}
-        </>
-    )
+    return <>
+        {children}
+    </>
 }
 
 export default AuthGuard;

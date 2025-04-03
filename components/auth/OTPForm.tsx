@@ -9,6 +9,7 @@ import {authService} from "@/lib/api/auth";
 import {FormEvent} from "preact-compat";
 import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
+import {handleError} from "@/lib/utils/handleError";
 
 const OTPForm = () => {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -22,15 +23,11 @@ const OTPForm = () => {
     const resetCountDownLocalStorage = withLocalStorage<ResetCountdownOTP>("resetCountdownOTP")
 
     const handleResendOTP = async () => {
-        const expirationTime = Date.now() + 300000;
         const userIdLocalStorage = withLocalStorage<UserID>("userId");
         const userId = userIdLocalStorage.get();
-        resetCountDownLocalStorage.set({data: expirationTime.toString()})
-        setIsDisabledButton(true);
-        setCountDown(300);
         try{
             const response = await authService.reSendOTP({user_id: userId?.data});
-            if(response.status === 200) {
+            if(response.status === 201) {
                 toast({
                     variant: "default",
                     title: "Success!",
@@ -38,21 +35,22 @@ const OTPForm = () => {
                 })
                 const OTPLocalStorage = withLocalStorage<Token>("OTP_token");
                 OTPLocalStorage.set({data: response.data.token});
+                const expirationTime = Date.now() + 300000;
+                resetCountDownLocalStorage.set({data: expirationTime.toString()})
+                setIsDisabledButton(true);
+                setCountDown(300);
             }
-        }catch (error: any){
-            if(error?.response?.data?.message) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error!',
-                    description: error.response.data.message,
-                });
-            } else {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error!',
-                    description: error.message || "Network Error",
-                });
-            }
+            console.log(response)
+        }catch (error: unknown){
+            const { message, constraints } = handleError(error);
+            setError(message);
+            toast({
+                variant: "destructive",
+                title: message,
+                description: Array.isArray(constraints)
+                    ? constraints[0]
+                    : constraints || "An error occurred",
+            })
         }
     };
 
@@ -104,7 +102,7 @@ const OTPForm = () => {
             return;
         }
         const payload: VerifyOTPForm = {
-            otp: otpValue,
+            otp_code: otpValue,
             rememberMe: rememberMe
         }
         setIsLoading(true);
@@ -116,24 +114,20 @@ const OTPForm = () => {
                 description: response.data.message,
             })
             const tokenLocalStorage = withLocalStorage<Token>("token");
-            if(response.status === 200) {
-                tokenLocalStorage.set({data: response.data.response.token});
+            if(response.data.statusCode === 200) {
+                tokenLocalStorage.set({data: response.data.token});
                 router.push("/");
             }
-        } catch (error: any) {
-            if(error?.response?.data?.message) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error!',
-                    description: error.response.data.message,
-                });
-            } else {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error!',
-                    description: error.message || "Network Error",
-                });
-            }
+        } catch (error: unknown) {
+            const { message, constraints } = handleError(error);
+            setError(message);
+            toast({
+                variant: "destructive",
+                title: message,
+                description: Array.isArray(constraints)
+                    ? constraints[0]
+                    : constraints || "An error occurred",
+            })
         } finally {
             setIsLoading(false);
         }
